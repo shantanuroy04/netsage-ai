@@ -7,7 +7,6 @@
 
 **An evidence-first network troubleshooting assistant for Cisco / Packet Tracer faults.**
 
-**🔗 Live demo: [netsage-ai-public.streamlit.app](https://netsage-ai-public.streamlit.app)**
 
 NetSage AI helps a junior network engineer go from *"PC1 can't reach the server"*
 to a defensible root cause. It does this in a deliberate order: deterministic
