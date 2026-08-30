@@ -47,6 +47,34 @@ def _from_secrets(key: str) -> str | None:
         return None
 
 
+def secrets_diagnostic() -> dict:
+    """
+    Never-values report of what st.secrets actually sees, for the System page.
+    _from_secrets() above swallows every exception into None so a malformed
+    secrets.toml looks identical to "no secret set" — this surfaces the
+    difference without ever printing a secret value.
+    """
+    try:
+        import streamlit as st
+
+        keys = sorted(st.secrets.keys())
+        return {
+            "secrets_readable": True,
+            "keys_present": keys,
+            "has_groq_api_key": "GROQ_API_KEY" in keys,
+            "has_groq_model": "GROQ_MODEL" in keys,
+            "error": None,
+        }
+    except Exception as exc:
+        return {
+            "secrets_readable": False,
+            "keys_present": [],
+            "has_groq_api_key": False,
+            "has_groq_model": False,
+            "error": f"{type(exc).__name__}: {exc}",
+        }
+
+
 def get_groq_api_key() -> str | None:
     return _from_secrets("GROQ_API_KEY") or os.getenv("GROQ_API_KEY") or None
 

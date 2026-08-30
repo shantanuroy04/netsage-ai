@@ -43,9 +43,38 @@ GROQ_MODEL=openai/gpt-oss-120b
 ```
 
 **Streamlit deployment** — add the same keys under `.streamlit/secrets.toml`
-or in the app's Secrets settings.
+or in the app's Secrets settings, then use **Reboot app** — secrets are not
+picked up until the app restarts.
 """
     )
+
+    diag = config.secrets_diagnostic()
+    with st.expander("Why isn't it picking up my secret? (diagnostic)"):
+        if not diag["secrets_readable"]:
+            st.error(f"st.secrets could not be read: {diag['error']}")
+            st.caption(
+                "This usually means the TOML in Settings → Secrets has a syntax "
+                "error — check for a missing `=` or missing quotes."
+            )
+        elif not diag["keys_present"]:
+            st.warning(
+                "st.secrets is readable but empty — no keys were saved, or the "
+                "app has not been rebooted since you saved them."
+            )
+        else:
+            st.write(f"Keys visible to this app: `{', '.join(diag['keys_present'])}`")
+            if not diag["has_groq_api_key"]:
+                st.error(
+                    "No key named exactly `GROQ_API_KEY` was found. Check for a "
+                    "typo, extra space, or wrong casing in the secrets box."
+                )
+            else:
+                st.success(
+                    "`GROQ_API_KEY` is present in secrets — if the badge above "
+                    "still says not configured, the value itself may be blank. "
+                    "Re-check the quoted value and reboot the app."
+                )
+        st.caption("Values are never shown here — only whether the keys exist.")
 else:
     st.success("API key detected. It is read from Streamlit secrets or the "
                "environment and is never displayed or written to the database.",
