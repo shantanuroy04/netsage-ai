@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.pka binary
+*.pkt binary
+*.db binary

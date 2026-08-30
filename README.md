@@ -1,6 +1,13 @@
 # 🌐 NetSage AI
 
+[![Live Demo](https://img.shields.io/badge/demo-live-1a73e8?logo=streamlit&logoColor=white)](https://netsage-ai-public.streamlit.app)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](requirements.txt)
+[![Built with Groq](https://img.shields.io/badge/AI-Groq-f55036)](https://groq.com)
+
 **An evidence-first network troubleshooting assistant for Cisco / Packet Tracer faults.**
+
+**🔗 Live demo: [netsage-ai-public.streamlit.app](https://netsage-ai-public.streamlit.app)**
 
 NetSage AI helps a junior network engineer go from *"PC1 can't reach the server"*
 to a defensible root cause. It does this in a deliberate order: deterministic
