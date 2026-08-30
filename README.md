@@ -7,6 +7,7 @@
 
 **An evidence-first network troubleshooting assistant for Cisco / Packet Tracer faults.**
 
+> *AI recommends → Rules verify → Human decides → Fix is documented, never auto-applied.*
 
 NetSage AI helps a junior network engineer go from *"PC1 can't reach the server"*
 to a defensible root cause. It does this in a deliberate order: deterministic
@@ -15,6 +16,14 @@ answers are **compared**, and a human engineer **decides** last.
 
 It is an advisory tool. It does not execute Cisco commands, does not connect to
 devices, and never applies a fix on its own.
+
+## Three brains, one decision
+
+| Brain | Role |
+|---|---|
+| 🐍 **Rule checker** | Deterministic Python — validates IPs, VLANs, routes, interfaces. Runs first, always. No LLM involved. |
+| 🤖 **AI engine** (Groq) | Reads the symptom, the evidence, and the checker's findings; produces a structured, evidence-cited diagnosis. |
+| 👨‍💼 **Human reviewer** | Makes the final Accept / Edit / Reject call. Nothing is applied to a network without this step. |
 
 ---
 
@@ -58,6 +67,52 @@ is given them, must reconcile with them, and is flagged when it doesn't.
 - **Responsible-AI logging** — every human correction recorded with the reason.
 - **Analytics dashboard** — issue type, severity, OSI layer, decisions,
   agreement and correction rates, all computed from the database.
+
+---
+
+## Dataset
+
+32 cases across 8 fault categories, each with a symptom, topology notes,
+show-command output, expected fault, OSI layer, severity, and the networking
+concept it teaches.
+
+| Category | Cases | Concepts covered |
+|---|---|---|
+| VLAN | 5 | Inter-VLAN routing, VLAN assignment, native VLAN mismatch, VLAN not allowed on trunk, trunk not configured |
+| Routing | 5 | Missing static route, asymmetric/missing return route, unreachable default route, OSPF area mismatch, routing loop |
+| DHCP | 4 | Pool misconfigured, excluded address range, missing relay, stale binding |
+| DNS | 4 | Incorrect server IP, DNS server has no internet, client misconfiguration, primary server down |
+| Gateway | 4 | Subnet mismatch, interface shutdown, no onward route, stale client IP |
+| ACL | 4 | Port blocked, all traffic denied, wrong direction, management locked out |
+| NAT | 3 | ACL subnet mismatch, wrong outside interface, target host unreachable |
+| Wireless | 3 | PSK mismatch, VLAN mapping wrong, guest isolation disabled |
+
+---
+
+## Evaluation checklist
+
+- ✅ 32 cases across 8 fault categories (`data/cases.csv`)
+- ✅ Evidence = symptom + topology notes + show-command output
+- ✅ AI diagnosis returns root cause, OSI layer, confidence, severity, evidence, next command, fix steps, concept
+- ✅ Deterministic Python rule checker — 4 modules, 16 rules, zero LLM involvement
+- ✅ Human review: Accept / Edit / Reject, with the original AI output preserved
+- ✅ 6 pre-loaded responsible-AI corrections (target: ≥5), clearly labelled as demo data
+- ✅ Dashboard: issue type, severity, OSI layer, decisions, agreement rate, correction rate — all derived from the database, never hard-coded
+- ✅ AI ↔ rule-checker conflict detection with an explicit banner
+- ✅ 17 automated pipeline tests + a headless render check of all 7 pages
+
+---
+
+## Tech stack
+
+| Component | Technology |
+|---|---|
+| UI | Streamlit (multi-page, `st.navigation`) |
+| AI | Groq (`openai/gpt-oss-120b` by default, JSON mode, configurable) |
+| Rule checker | Pure Python, stdlib only |
+| Database | SQLite |
+| Charts | Plotly |
+| Hosting | Streamlit Community Cloud |
 
 ---
 
